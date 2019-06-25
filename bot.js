@@ -20,7 +20,6 @@ client.on('ready', () => {
  
  
  
-const safety = JSON.parse(fs.readFileSync('./nomore.json', 'utf8')); //Toixc Codes
 client.on("message", message =>{//Toixc Codes
 if(!safety[message.author.id]) {//Toixc Codes
 safety[message.author.id] = {//Toixc Codes
