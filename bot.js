@@ -20,61 +20,164 @@ client.on('ready', () => {
  
  
  
+const safety = JSON.parse(fs.readFileSync('./nomore.json', 'utf8')); //Toixc Codes
+client.on("message", message =>{//Toixc Codes
+if(!safety[message.author.id]) {//Toixc Codes
+safety[message.author.id] = {//Toixc Codes
+actions: 0
+}}//Toixc Codes
+})//Toixc Codes
+// سوي ملف باسم safety.json
+//Toixc Codes
+client.on('guildMemberRemove', Toxic => {
+Toxic.guild.fetchAuditLogs().then( ac => {//Toixc Codes //Toixc Codes
+var anti = ac.entries.first();//Toixc Codes
+if(anti.action == "MEMBER_KICK") {//Toixc Codes
+if(!safety[anti.executor.id]) {//Toixc Codes //Toixc Codes
+safety[anti.executor.id] = {//Toixc Codes
+actions: 0//Toixc Codes //Toixc Codes
+};
+} else { //Toixc Codes
+safety[anti.executor.id].actions+=1//Toixc Codes
+if (safety[anti.executor.id].actions == 5) {//Toixc Codes
+Toxic.guild.members.get(anti.executor.id).ban("Griefing")//Toixc Codes
+console.log("banned griefer 1")//Toixc Codes
+safety[anti.executor.id].actions = 0//Toixc Codes
+}//Toixc Codes
+}//Toixc Codes
+    }//Toixc Codes
+    });//Toixc Codes
+    fs.writeFile("./safety.json", JSON.stringify(safety) ,(err) =>{//Toixc Codes
+        if (err) console.log(err.message);//Toixc Codes
+    });//Toixc Codes
+});//Toixc Codes
  
-client.on("message", message => {
-  if (message.author.bot) return;
-    if(!message.channel.guild) return;
- let args = message.content.split(' ').slice(1).join(' ');
-    if(message.content.split(' ')[0] == prefix + 'pbc') {
-        if (!args[1]) {
-    message.channel.send(":white_check_mark: ***pbc <message>***");
-    return;
-    }
-        message.guild.members.forEach(member => {
-      if(!message.member.hasPermission('ADMINISTRATOR'))  return;
-      message.react("✅");
-            const w = ['./1.png',
-                       './2.png',
-                       './3.png',
-                       './4.png',
-                       './5.png',
-                       './6.png',
-                       './7.png',];
-            let Image = Canvas.Image,
-            canvas = new Canvas(400, 200),
-            ctx = canvas.getContext('2d');
-            ctx.patternQuality = 'bilinear';
-        ctx.filter = 'bilinear';
-        ctx.antialias = 'subpixel';
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
-        ctx.shadowOffsetY = 2;
-        ctx.shadowBlur = 2;
-            fs.readFile(`${w[Math.floor(Math.random() * w.length)]}`, function (err, Background) {
-            if (err) return console.log(err);
-            let BG = Canvas.Image;
-            let ground = new Image;
-            ground.src = Background;
-            ctx.drawImage(ground, 0, 0, 400, 200);
  
-});
- let url = member.user.displayAvatarURL.endsWith(".webp") ? member.user.displayAvatarURL.slice(5, -20) + ".png" : member.user.displayAvatarURL;
-               jimp.read(url, (err, ava) => {
-                    if (err) return console.log(err);
-                    ava.getBuffer(jimp.MIME_PNG, (err, buf) => {
-                        if (err) return console.log(err);
-                       
-                        ctx.font = '17px Arial';
-                              ctx.fontSize = '13px';
-                              ctx.fillStyle = "#FFFFFF";
-                              ctx.textAlign = "center";
-              ctx.fillText(`${args} ` , 200, 100);
-member.sendFile(canvas.toBuffer());
-});
-});
-});
+ 
+ 
+ 
+client.on('roleDelete', Toxic => {//Toixc Codes
+Toxic.guild.fetchAuditLogs().then( ac => {//Toixc Codes
+var anti = ac.entries.first();
+if(anti.action == "ROLE_DELETE") {//Toixc Codes
+if(!safety[anti.executor.id]) {//Toixc Codes
+safety[anti.executor.id] = {//Toixc Codes
+actions: 0//Toixc Codes
+};
+} else { //Toixc Codes
+safety[anti.executor.id].actions+=1//Toixc Codes
+if (safety[anti.executor.id].actions == 3) {//Toixc Codes
+Toxic.guild.members.get(anti.executor.id).ban("Griefing")//Toixc Codes
+console.log("banned griefer 1")//Toixc Codes
+safety[anti.executor.id].actions = 0//Toixc Codes
+}//Toixc Codes
 }
+    }//Toixc Codes
+    });//Toixc Codes
+    fs.writeFile("./safety.json", JSON.stringify(safety) ,(err) =>{//Toixc Codes
+        if (err) console.log(err.message);
+    });//Toixc Codes
 });
  
+ 
+ 
+ 
+client.on('channelDelete', Toxic => {//Toixc Codes
+Toxic.guild.fetchAuditLogs().then( ac => {//Toixc Codes
+var anti = ac.entries.first();//Toixc Codes
+if(anti.action == "CHANNEL_DELETE") {
+if(!safety[anti.executor.id]) {
+safety[anti.executor.id] = {//Toixc Codes
+actions: 0
+};//Toixc Codes
+} else {
+safety[anti.executor.id].actions+=1//Toixc Codes
+if (safety[anti.executor.id].actions == 1) {//Toixc Codes
+Toxic.guild.members.get(anti.executor.id).ban("Griefing")
+console.log("banned griefer 1")
+safety[anti.executor.id].actions = 0//Toixc Codes
+}
+}
+    }
+    });//Toixc Codes
+    fs.writeFile("./safety.json", JSON.stringify(safety) ,(err) =>{
+        if (err) console.log(err.message);//Toixc Codes
+    });//Toixc Codes
+});//Toixc Codes
+ 
+ 
+client.on('roleCreate', Toxic => {//Toixc Codes
+Toxic.guild.fetchAuditLogs().then( ac => {//Toixc Codes
+var anti = ac.entries.first();//Toixc Codes
+if(anti.action == "ROLE_CREATE") {//Toixc Codes
+if(!safety[anti.executor.id]) {//Toixc Codes
+safety[anti.executor.id] = {//Toixc Codes
+actions: 0//Toixc Codes
+};//Toixc Codes
+} else { //Toixc Codes
+safety[anti.executor.id].actions+=1//Toixc Codes
+if (safety[anti.executor.id].actions == 4) {//Toixc Codes
+Toxic.guild.members.get(anti.executor.id).ban("Griefing")//Toixc Codes
+console.log("banned griefer 1")//Toixc Codes
+safety[anti.executor.id].actions = 0
+}//Toixc Codes
+}//Toixc Codes
+    }//Toixc Codes
+    });//Toixc Codes
+    fs.writeFile("./safety.json", JSON.stringify(safety) ,(err) =>{//Toixc Codes
+        if (err) console.log(err.message);//Toixc Codes
+    });//Toixc Codes
+});
+ 
+ 
+ 
+ 
+client.on('channelCreate', Toxic => {
+Toxic.guild.fetchAuditLogs().then( ac => {
+var anti = ac.entries.first();
+if(anti.action == "CHANNEL_CREATE") {
+if(!safety[anti.executor.id]) {
+safety[anti.executor.id] = {
+actions: 0
+};
+} else {
+safety[anti.executor.id].actions+=1
+if (safety[anti.executor.id].actions == 3) {
+Toxic.guild.members.get(anti.executor.id).ban("Griefing")
+console.log("banned griefer 1")
+safety[anti.executor.id].actions = 0
+}
+}
+    }
+    });
+    fs.writeFile("./safety.json", JSON.stringify(safety) ,(err) =>{
+        if (err) console.log(err.message);
+    });
+});
+ 
+ 
+client.on('guildBanAdd', function(Toxic){
+Toxic.fetchAuditLogs().then( ac => {
+var anti = ac.entries.first();
+if(anti.action == "MEMBER_BAN_ADD") {
+if(!safety[anti.executor.id]) {
+safety[anti.executor.id] = {
+actions: 0
+};
+} else {
+safety[anti.executor.id].actions+=1
+if (safety[anti.executor.id].actions == 3) {
+Toxic.members.get(anti.executor.id).ban("Griefing")
+console.log("banned griefer 1")
+safety[anti.executor.id].actions = 0
+}
+}
+    }
+    });
+    fs.writeFile("./safety.json", JSON.stringify(safety) ,(err) =>{
+        if (err) console.log(err.message);
+    });
+});
  
  
  
