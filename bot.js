@@ -16,7 +16,7 @@ client.on('ready', () => {
  });
  
  
- let points = JSON.parse(fs.readFileSync('./points.json' , 'utf8'));
+
 
 
 client.on('message', async message => {
