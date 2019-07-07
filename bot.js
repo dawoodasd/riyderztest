@@ -1,153 +1,59 @@
-const Discord = require('discord.js');
-const client = new Discord.Client();
-const prefix = '!'
-
- 
- 
-client.on('ready', () => {
-    console.log(`~~~~~~~~~~~~~~~~~`);
-    console.log(`Logging into Discord`);
-    console.log(`~~~~~~~~~~~~~~~~~~~~~`);
-    console.log(`on  ${client.guilds.size} Servers `);
-    console.log(`~~~~~~~~~~~~~~~~~~~~~~~~`);
-    console.log(`Logged in as ${client.user.tag}!`);
-    client.user.setGame(`#Riyderz TesT |!Help`,"http://twitch.tv/y04zgamer")
-    client.user.setStatus("dnd")
- });
- 
- 
-
-
-
-client.on('message', async message => {
-
-
-	if(message.channel.type !== 'text') return;
-	
-	
-	var command = message.content.toLowerCase().split(" ")[0];
-	var args = message.content.toLowerCase().split(" ");
-	var userM = message.guild.member(message.mentions.users.first() || message.guild.members.find(m => m.id == args[1]));
-	  const embed  = new Discord.RichEmbed()
-.setDescription(`
-**لم يتم تسجيل أي نقطة حتى الأن **
-** أمثلة للأوامر: **
-**:small_orange_diamond:** ${prefix}points ${message.author} 1 \`لتغيير نقاط شخص معين \`
-**:small_orange_diamond:** ${prefix}points ${message.author} +1 \`لزيادة نقاط شخص معين\`
-**:small_orange_diamond:** ${prefix}points ${message.author} -1 \`لأزالة نقطة من شخص معين \`
-**:small_orange_diamond:** ${prefix}points ${message.author} 0 \`لتصفير نقاط شخص معين \`
-**:small_orange_diamond:** ${prefix}points reset \`لتصفير جميع النقاط\``)
-.setFooter('Requested by '+message.author.username, message.author.avatarURL)
-.setColor(`#e60909`)
-  const error  = new Discord.RichEmbed()
-.setDescription(`
-**:x: | يجب كتابة الأمر بشكل صحيح. **
-** أمثلة للأوامر: **
-**:small_orange_diamond:** ${prefix}points ${message.author} 1 \`لتغيير نقاط شخص معين \`
-**:small_orange_diamond:** ${prefix}points ${message.author} +1 \`لزيادة نقاط شخص معين\`
-**:small_orange_diamond:** ${prefix}points ${message.author} -1 \`لأزالة نقطة من شخص معين \`
-**:small_orange_diamond:** ${prefix}points ${message.author} 0 \`لتصفير نقاط شخص معين \`
-**:small_orange_diamond:** ${prefix}points reset \`لتصفير جميع النقاط\``)
-.setFooter('Requested by '+message.author.username, message.author.avatarURL)
-.setColor(`#e60909`)
-if(command == prefix + 'points') {
-	 
-		if(!message.guild.member(client.user).hasPermission('EMBED_LINKS')) return message.channel.send(':no_entry: | I dont have Embed Links permission.');
-		if(!args[1]) {
-			if(!points) return message.channel.send(embed);
-			var members = Object.values(points);
-			var memb = members.filter(m => m.points >= 1);
-			if(memb.length == 0) return message.channel.send(embed);
-			var x = 1;
-			let pointsTop = new Discord.RichEmbed()
-			.setAuthor('Points:')
-			.setColor('#FBFBFB')
-			.setDescription(memb.sort((second, first) => first.points > second.points).slice(0, 10).map(m => `**:small_blue_diamond:** <@${m.id}> \`${m.points}\``).join('\n'))
-			.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL);
-			message.channel.send({
-				embed: pointsTop
-			});
-		}else if(args[1] == 'reset') {
-			let pointsReset = new Discord.RichEmbed()
-			.setDescription('**:white_check_mark: | تم تصفير جميع النقاظ بنجاح**')
-			.setFooter('Requested by '+message.author.username, message.author.avatarURL)
-			if(!message.member.hasPermission('MANAGE_GUILD')) return message.channel.send("You dont have Manage Server permission.");
-			if(!points) return message.channel.send(pointsReset);
-			var members = Object.values(points);
-			var memb = members.filter(m => m.points >= 1);
-			if(memb.length == 0) return message.channel.send(pointsReset);
-			points = {};
-			message.channel.send(pointsReset);
-		}else if(userM) {
-			if(!message.member.hasPermission('MANAGE_GUILD')) return  message.channel.send("You dont have Manage Server permission.");
-			if(!points[userM.user.id]) points[userM.user.id] = {
-				points: 0,
-				id: userM.user.id
-			};
-			if(!args[2]) {
-				if(points[userM.user.id].points == 0) return message.channel.send( `${userM.user.username} Not have any points.`);
-				var userPoints = new Discord.RichEmbed()
-				.setColor('#d3c325')
-				.setAuthor(`${userM.user.username} have ${points[userM.user.id].points} points.`);
-				message.channel.send({
-					embed: userPoints
-				});
-			}else if(args[2] == 'reset') {
-				if(points[userM.user.id].points == 0) return message.channel.send(error);
-				points[userM.user.id].points = 0;
-				message.channel.send(`Successfully reset ${userM.user.username} points.`);
-			}else if(args[2].startsWith('+')) {
-				args[2] = args[2].slice(1);
-				args[2] = parseInt(Math.floor(args[2]));
-				if(points[userM.user.id].points == 1000000) return message.channel.send(error);
-				if(!args[2]) return message.channel.send(error);
-				if(isNaN(args[2])) return message.channel.send(error);
-				if(args[2] > 1000000) return message.channel.send(error);
-				if(args[2] < 1) return message.channel.send(error);
-				if((points[userM.user.id].points + args[2]) > 1000000) args[2] = 1000000 - points[userM.user.id].points;
-				points[userM.user.id].points += args[2];
-				let add = new Discord.RichEmbed()
-				.setDescription(`**:small_blue_diamond:** <@${userM.id}> \`${points[userM.user.id].points}\``)
-				.setAuthor('Points:')
-				.setColor('#FBFBFB')
-				.setFooter('Requested by' + message.author.username, message.author.avatarURL)
-				message.channel.send(add);
-			}else if(args[2].startsWith('-')) {
-				args[2] = args[2].slice(1);
-				args[2] = parseInt(Math.floor(args[2]));
-				if(points[userM.user.id].points == 0) return message.channel.send(error);
-				if(!args[2]) return message.channel.send(error);
-				if(isNaN(args[2])) return message.channel.send(error);
-				if(args[2] > 1000000) return message.channel.send(error);
-				if(args[2] < 1) return message.channel.send(error);
-				if((points[userM.user.id].points - args[2]) < 0) args[2] = points[userM.user.id].points;
-				points[userM.user.id].points -= args[2];
-					let rem = new Discord.RichEmbed()
-				.setDescription(`**:small_blue_diamond:** <@${userM.id}> \`${points[userM.user.id].points}\``)
-				.setAuthor('Points:')
-				.setColor('#FBFBFB')
-				.setFooter('Requested by' + message.author.username, message.author.avatarURL)
-				message.channel.send(rem);
-			}else if(!args[2].startsWith('+') || !args[2].startsWith('-')) {
-				args[2] = parseInt(Math.floor(args[2]));
-				if(isNaN(args[2])) return message.channel.send(error);
-				if(args[2] > 1000000) return message.channel.send(error);
-				if(args[2] < 1) return message.channel.send(error);
-				if(points[userM.user.id].points == args[2]) return message.channel.send(`${userM.user.username} points is already ${args[2]}.`);
-				points[userM.user.id].points = args[2];
-					let set = new Discord.RichEmbed()
-				.setDescription(`**:small_blue_diamond:** <@${userM.id}> \`${points[userM.user.id].points}\``)
-				.setAuthor('Points:')
-				.setColor('#FBFBFB')
-				.setFooter('Requested by' + message.author.username, message.author.avatarURL)
-				message.channel.send(set);
-			}
-			}
-			}
-      fs.writeFile("./points.json", JSON.stringify(points) ,(err) =>{
-          if (err) console.log(err.message);
-      });
-  
+const discord = new require("discord.js");
+const client = new discord.Client();
+var config = {
+  events: [
+    {type: "CHANNEL_CREATE", logType: "CHANNEL_CREATE", limit: 4 , delay: 5000},
+    {type: "CHANNEL_DELETE", logType: "CHANNEL_DELETE", limit: 4, delay: 5000},
+    {type: "GUILD_MEMBER_REMOVE", logType: "MEMBER_KICK", limit: 4, delay: 5000},
+    {type: "GUILD_BAN_ADD", logType: "MEMBER_BAN_ADD", limit: 4, delay: 5000},
+    {type: "GUILD_ROLE_CREATE", logType: "ROLE_CREATE", limit: 5, delay: 5000},
+    {type: "GUILD_ROLE_DELETE", logType: "ROLE_DELETE", limit: 4, delay: 5000},
+  ]
+}
+client.on("error", (e) => console.error(e));
+client.on("raw", (packet)=> {
+  let {t, d} = packet, type = t, {guild_id} = data = d || {};
+  if (type === "READY") {
+    client.startedTimestamp = new Date().getTime();
+    client.captures = [];
+  }
+  let event = config.events.find(anEvent => anEvent.type === type);
+  if (!event) return;
+  let guild = client.guilds.get(guild_id);
+  if (!guild) return;
+  guild.fetchAuditLogs({limit : 1, type: event.logType})
+    .then(eventAudit => {
+      let eventLog = eventAudit.entries.first();
+      if (!eventLog) return;
+      let executor = eventLog.executor;
+      guild.fetchAuditLogs({type: event.logType, user: executor})
+        .then((userAudit, index) => {
+          let uses = 0;
+          userAudit.entries.map(entry => {
+            if (entry.createdTimestamp > client.startedTimestamp && !client.captures.includes(index)) uses += 1;
+          });
+          setTimeout(() => {
+            client.captures[index] = index
+          }, event.delay || 2000)
+          if (uses >= event.limit) {
+            client.emit("reachLimit", {
+              user: userAudit.entries.first().executor,
+              member: guild.members.get(executor.id),
+              guild: guild,
+              type: event.type,
+            })
+          }
+        }).catch(console.error)
+    }).catch(console.error)
 });
- 
+client.on("reachLimit", (limit)=> {
+  let log = limit.guild.channels.find( channel => channel.name === "log");
+  log.send(limit.user.username+"\ntried to hack (!)");
+  limit.guild.owner.send(limit.user.username+"\ntried to hack (!)")
+  limit.member.roles.map(role => {
+    limit.member.removeRole(role.id)
+    .catch(log.send)
+  });
+});
+
  client.login(process.env.BOT_TOKEN);
